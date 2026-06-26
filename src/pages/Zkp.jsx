@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { CONTRACT_ADDRESS } from '../config/contract'
 
 const ZKP_STEPS_LOGIN = [
   { label: 'Menghubungkan MetaMask Wallet...', icon: '🦊', color: 'orange' },
@@ -84,6 +85,7 @@ export default function Zkp() {
         `Action: ${action}`,
         `Username: ${username}`,
         `Wallet: ${walletAddress}`,
+        `Contract: ${CONTRACT_ADDRESS}`,
         `Timestamp: ${timestamp}`,
         ``,
         `Dengan menandatangani pesan ini,`,
