@@ -160,11 +160,27 @@ export default function Dashboard() {
                         ⛓️
                       </div>
                       <div>
-                        <p className="text-white/90 text-sm font-medium">ZKP Proof Terverifikasi</p>
-                        <p className="text-white/40 text-xs mt-1 mb-2">Smart Contract memverifikasi tanpa password asli.</p>
-                        <div className="bg-white/[0.02] px-2.5 py-1.5 rounded text-xs font-mono text-cyber-400/80 inline-block border border-white/[0.05]">
-                          Tx: 0x8a9b7c...def123 (Simulasi)
-                        </div>
+                        <p className="text-white/90 text-sm font-medium">Transaksi On-Chain Terverifikasi</p>
+                        <p className="text-white/40 text-xs mt-1 mb-2">Smart Contract telah memproses bukti (proof) ZKP secara nyata di jaringan.</p>
+                        {txHash ? (
+                          <div className="flex items-center gap-2">
+                            <div className="bg-white/[0.02] px-2.5 py-1.5 rounded text-xs font-mono text-cyber-400/80 border border-white/[0.05]">
+                              Tx: {txHash.substring(0, 10)}...{txHash.substring(txHash.length - 8)}
+                            </div>
+                            <a 
+                              href={`https://sepolia.etherscan.io/tx/${txHash}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-cyber-300 hover:text-cyber-400 flex items-center gap-1 bg-cyber-500/10 px-2 py-1.5 rounded transition-colors"
+                            >
+                              <span>🔍</span> Cek Etherscan ↗
+                            </a>
+                          </div>
+                        ) : (
+                          <div className="bg-white/[0.02] px-2.5 py-1.5 rounded text-xs font-mono text-cyber-400/80 inline-block border border-white/[0.05]">
+                            Tx: (Tidak tersedia)
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

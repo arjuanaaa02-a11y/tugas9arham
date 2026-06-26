@@ -7,6 +7,7 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authMethod, setAuthMethod] = useState(null); // 'konvensional' | 'zkp'
   const [txSignature, setTxSignature] = useState(null);
+  const [txHash, setTxHash] = useState(null); // Hash transaksi on-chain terakhir
 
   // Cek jika wallet sudah terkoneksi sebelumnya
   useEffect(() => {
@@ -81,17 +82,20 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
     setAuthMethod(null);
     setTxSignature(null);
+    setTxHash(null);
   };
 
-  const login = (method) => {
+  const login = (method, hash = null) => {
     setIsAuthenticated(true);
     setAuthMethod(method);
+    if (hash) setTxHash(hash);
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setAuthMethod(null);
     setTxSignature(null);
+    setTxHash(null);
   };
 
   return (
@@ -100,6 +104,8 @@ export function AuthProvider({ children }) {
       isAuthenticated,
       authMethod,
       txSignature,
+      txHash,
+      setTxHash,
       connectWallet,
       disconnectWallet,
       signMessage,
