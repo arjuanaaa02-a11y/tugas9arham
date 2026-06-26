@@ -6,6 +6,7 @@ export function AuthProvider({ children }) {
   const [account, setAccount] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authMethod, setAuthMethod] = useState(null); // 'konvensional' | 'zkp'
+  const [txSignature, setTxSignature] = useState(null);
 
   // Cek jika wallet sudah terkoneksi sebelumnya
   useEffect(() => {
@@ -28,12 +29,50 @@ export function AuthProvider({ children }) {
     try {
       if (!window.ethereum) {
         alert('MetaMask tidak terdeteksi! Silakan install ekstensi MetaMask.');
-        return;
+        return null;
       }
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       setAccount(accounts[0]);
+      return accounts[0];
     } catch (error) {
       console.error('Error saat koneksi ke MetaMask:', error);
+      return null;
+    }
+  };
+
+  /**
+   * Meminta tanda tangan (signature) dari MetaMask untuk konfirmasi transaksi.
+   * Menggunakan personal_sign untuk menandatangani pesan secara lokal.
+   * @param {string} message - Pesan yang akan ditandatangani
+   * @returns {Promise<{signature: string, address: string} | null>}
+   */
+  const signMessage = async (message) => {
+    try {
+      if (!window.ethereum) {
+        throw new Error('MetaMask tidak terdeteksi!');
+      }
+
+      let currentAccount = account;
+      if (!currentAccount) {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        currentAccount = accounts[0];
+        setAccount(currentAccount);
+      }
+
+      // Request personal signature dari MetaMask
+      const signature = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [message, currentAccount],
+      });
+
+      setTxSignature(signature);
+      return { signature, address: currentAccount };
+    } catch (error) {
+      console.error('Error saat meminta tanda tangan MetaMask:', error);
+      if (error.code === 4001) {
+        throw new Error('Pengguna menolak permintaan tanda tangan MetaMask.');
+      }
+      throw error;
     }
   };
 
@@ -41,6 +80,7 @@ export function AuthProvider({ children }) {
     setAccount(null);
     setIsAuthenticated(false);
     setAuthMethod(null);
+    setTxSignature(null);
   };
 
   const login = (method) => {
@@ -51,6 +91,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setIsAuthenticated(false);
     setAuthMethod(null);
+    setTxSignature(null);
   };
 
   return (
@@ -58,8 +99,10 @@ export function AuthProvider({ children }) {
       account,
       isAuthenticated,
       authMethod,
+      txSignature,
       connectWallet,
       disconnectWallet,
+      signMessage,
       login,
       logout
     }}>

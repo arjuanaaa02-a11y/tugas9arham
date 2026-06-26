@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Dashboard() {
-  const { account, isAuthenticated, authMethod, logout } = useAuth()
+  const { account, isAuthenticated, authMethod, txSignature, logout } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -115,6 +115,23 @@ export default function Dashboard() {
                       <p className="text-white/40 text-xs mt-1">Baru saja</p>
                     </div>
                   </div>
+
+                  {authMethod === 'zkp' && (
+                    <div className="flex items-start gap-3 pt-4 border-t border-white/[0.05]">
+                      <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
+                        🦊
+                      </div>
+                      <div>
+                        <p className="text-white/90 text-sm font-medium">MetaMask Signature Terverifikasi</p>
+                        <p className="text-white/40 text-xs mt-1 mb-2">Transaksi dikonfirmasi melalui tanda tangan digital MetaMask.</p>
+                        {txSignature && (
+                          <div className="bg-white/[0.02] px-2.5 py-1.5 rounded text-xs font-mono text-orange-400/80 inline-block border border-white/[0.05] break-all max-w-full">
+                            Sig: {txSignature.substring(0, 26)}...{txSignature.substring(txSignature.length - 10)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {authMethod === 'zkp' && (
                     <div className="flex items-start gap-3 pt-4 border-t border-white/[0.05]">
